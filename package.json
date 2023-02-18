@@ -3,14 +3,12 @@
   "displayName": "shell-file-mode",
   "description": "a port of shell-file.el to vscode",
   "version": "0.0.1",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
-  ],
-  "activationEvents": [
-    "onCommand:shell-file-mode.helloWorld"
   ],
   "main": "./dist/extension.js",
   "contributes": {
