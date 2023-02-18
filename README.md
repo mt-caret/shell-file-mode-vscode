@@ -4,6 +4,7 @@ A port of [shell-file-mode](https://github.com/rnml/shell-file-mode) to VSCode.
 
 ## TODOs:
 
+- improve UX when first creating shell file
 - clean up this readme
 - fix CHANGELOG.md
 - remove the noisy copilot prompts
