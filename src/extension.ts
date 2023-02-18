@@ -22,6 +22,8 @@ const newBlock = `
 ${separatorLine}
 `;
 
+const defaultPath = "~/shell-file.sh";
+
 function findStartLine(doc: vscode.TextDocument): vscode.TextLine | null {
 	for (let i = 0; i < doc.lineCount; i++) {
 		const line = doc.lineAt(i);
@@ -33,27 +35,93 @@ function findStartLine(doc: vscode.TextDocument): vscode.TextLine | null {
 	return null;
 }
 
+function looksLikeShellFile(doc: vscode.TextDocument): boolean {
+	const isShellLanguage =
+		doc.languageId === "shellscript" || doc.fileName.endsWith(".sh");
+	return isShellLanguage &&
+		doc.getText().includes(startLine) &&
+		doc.getText().includes(separatorLine);
+}
+
 export function activate(context: vscode.ExtensionContext) {
 	const commands: [string, (() => void)][] = [
-		// Jump to the shell file if it's already open, and create a new one
-		// with filename "foo.sh" in the current directory if not, initialized
-		// with string "empty shell file".
+		// Jump to the shell file at the default path, and populate it with
+		// the template if it doesn't exist.
 		['shell-file-mode.openShellFile', async () => {
-			const editor = vscode.window.activeTextEditor;
-			if (editor) {
-				const doc = editor.document;
-				const docName = doc.fileName;
-				if (docName.endsWith(".sh")) {
-					vscode.window.showInformationMessage("Shell file already open");
+			// use bash to resolve the path, so that it expands ~ to the
+			// home directory
+
+			const resolvedDefaultPath =
+				(await vscode.window.withProgress({
+					location: vscode.ProgressLocation.Notification,
+					title: "Resolving default path",
+					cancellable: false,
+				}, () => new Promise<string>((resolve, reject) => {
+					const child = require("child_process").exec(
+						`bash -c "echo ${defaultPath}"`,
+						(err: any, stdout: string) => {
+							if (err) {
+								reject(err);
+							} else {
+								resolve(stdout.trim());
+							}
+						},
+					);
+				}))).trim();
+
+			// check if the file exists, and if not, create it
+
+			if (!await vscode.workspace.fs.stat(vscode.Uri.file(resolvedDefaultPath)).then(() => true, () => false)) {
+				const edit = new vscode.WorkspaceEdit();
+				edit.createFile(vscode.Uri.file(resolvedDefaultPath));
+				const success = await vscode.workspace.applyEdit(edit);
+				if (!success) {
+					vscode.window.showErrorMessage("Failed to create file");
 					return;
 				}
 			}
 
-			const doc = await vscode.workspace.openTextDocument({
-				language: 'shellscript', content: template
-			});
-
+			const doc = await vscode.workspace.openTextDocument(resolvedDefaultPath);
 			vscode.window.showTextDocument(doc);
+
+			if (looksLikeShellFile(doc)) {
+				vscode.window.showInformationMessage("Shell file already open");
+				return;
+			}
+
+			// check if the file is empty, and if so, populate it with the
+			// template
+
+			if (doc.getText().trim() !== "") {
+				vscode.window.showErrorMessage("Shell file is not empty");
+				return;
+			}
+
+			const edit = new vscode.WorkspaceEdit();
+			edit.insert(doc.uri, new vscode.Position(0, 0), template);
+
+			const success = await vscode.workspace.applyEdit(edit);
+
+			if (!success) {
+				vscode.window.showErrorMessage("Failed to apply edit");
+				return;
+			}
+
+			await doc.save();
+
+			vscode.window.showInformationMessage("Shell file created");
+
+			// move the cursor to the new block
+
+			const newCursorPosition = new vscode.Position(3, 0);
+			const editor = vscode.window.activeTextEditor;
+			if (!editor) {
+				vscode.window.showErrorMessage("No active editor");
+				return;
+			}
+
+			editor.selection =
+				new vscode.Selection(newCursorPosition, newCursorPosition);
 		}],
 		// Insert an empty block at the top of the shell file.
 		['shell-file-mode.insertBlock', async () => {
@@ -64,8 +132,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 
 			const doc = editor.document;
-			const docName = doc.fileName;
-			if (!docName.endsWith(".sh")) {
+			if (!looksLikeShellFile(doc)) {
 				vscode.window.showErrorMessage("Not a shell file");
 				return;
 			}
@@ -108,7 +175,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const doc = editor.document;
 			const docName = doc.fileName;
-			if (!docName.endsWith(".sh")) {
+			if (!looksLikeShellFile(doc)) {
 				vscode.window.showErrorMessage("Not a shell file");
 				return;
 			}
