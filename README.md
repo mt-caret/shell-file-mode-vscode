@@ -2,6 +2,12 @@
 
 A port of [shell-file-mode](https://github.com/rnml/shell-file-mode) to VSCode.
 
+| command                              | keybinding   | keybinding (mac) |
+|--------------------------------------|--------------|------------------|
+| shell-file-mode.findShellFile        | ctrl+shift+f | cmd+shift+f      |
+| shell-file-mode.insertShellFileBlock | ctrl+shfit+i | cmd+shift+i      |
+| shell-file-mode.runShellFileBlock    | ctrl+shift+r | cmd+shift+r      |
+
 ## TODOs:
 
 - clean up this readme
@@ -9,10 +15,10 @@ A port of [shell-file-mode](https://github.com/rnml/shell-file-mode) to VSCode.
 - remove the noisy copilot prompts
 - `shell-file-mode.openShellFile` and `shell-file-mode.runShellFile` should move
   cursor to appropriate position in the block
-- associate default keybindings for commands?
 - add some tests?
 - refactor codebase to reduce duplication
 - make shell file path configurable
+- vim-like key sequence triggers
 
 <!--
 

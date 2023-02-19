@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const commands: [string, (() => void)][] = [
 		// Jump to the shell file at the default path, and populate it with
 		// the template if it doesn't exist.
-		['shell-file-mode.openShellFile', async () => {
+		['shell-file-mode.findShellFile', async () => {
 			// use bash to resolve the path, so that it expands ~ to the
 			// home directory
 
@@ -124,7 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
 				new vscode.Selection(newCursorPosition, newCursorPosition);
 		}],
 		// Insert an empty block at the top of the shell file.
-		['shell-file-mode.insertBlock', async () => {
+		['shell-file-mode.insertShellFileBlock', async () => {
 			const editor = vscode.window.activeTextEditor;
 			if (!editor) {
 				vscode.window.showErrorMessage("No active editor");
@@ -165,7 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}],
 		// Move the block that the cursor is currently on to the top of the
 		// file, and execute the file.
-		['shell-file-mode.runShellFile', async () => {
+		['shell-file-mode.runShellFileBlock', async () => {
 			// find the line that the cursor is currently on
 			const editor = vscode.window.activeTextEditor;
 			if (!editor) {

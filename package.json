@@ -15,16 +15,36 @@
   "contributes": {
     "commands": [
       {
-        "command": "shell-file-mode.openShellFile",
-        "title": "Open a new shell-file."
+        "command": "shell-file-mode.findShellFile",
+        "title": "open a new shell-file."
       },
       {
-        "command": "shell-file-mode.runShellFile",
-        "title": "run current block in shell file."
-      },
-      {
-        "command": "shell-file-mode.insertBlock",
+        "command": "shell-file-mode.insertShellFileBlock",
         "title": "insert new block in shell file."
+      },
+      {
+        "command": "shell-file-mode.runShellFileBlock",
+        "title": "run current block in shell file."
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "shell-file-mode.findShellFile",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell-file-mode.insertShellFileBlock",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell-file-mode.runShellFileBlock",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
       }
     ]
   },
