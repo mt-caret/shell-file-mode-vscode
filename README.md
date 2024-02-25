@@ -2,6 +2,8 @@
 
 A port of [shell-file-mode](https://github.com/rnml/shell-file-mode) to VSCode.
 
+Install from [the VSCode extension marketplace](https://marketplace.visualstudio.com/items?itemName=mtakeda.shell-file-mode).
+
 | command                              | keybinding   | keybinding (mac) |
 |--------------------------------------|--------------|------------------|
 | shell-file-mode.findShellFile        | ctrl+shift+f | cmd+shift+f      |
