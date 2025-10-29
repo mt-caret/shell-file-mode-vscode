@@ -3,7 +3,7 @@
   "displayName": "shell-file-mode",
   "description": "a port of shell-file.el to vscode",
   "publisher": "mtakeda",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "repository": "github:mt-caret/shell-file-mode-vscode",
   "engines": {

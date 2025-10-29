@@ -1,3 +1,4 @@
+import { homedir } from "os";
 import * as vscode from "vscode";
 import { taskExec } from "./task";
 
@@ -273,7 +274,14 @@ async function runShellFileBlock() {
   const shellExec = vscode.workspace
     .getConfiguration("shell-file-mode")
     .get<string>("shellExecutable", "/usr/bin/bash");
-  await taskExec("shell-file exec", shellExec, [docName]);
+  await taskExec("shell-file exec", shellExec, [docName], { cwd: getCwd() });
+}
+
+function getCwd() {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders !== undefined && workspaceFolders.length > 0)
+    return workspaceFolders[0].uri.fsPath;
+  return homedir();
 }
 
 export function activate(context: vscode.ExtensionContext) {
